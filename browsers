@@ -1,0 +1,15 @@
+# Version  and Extension
+
+| **Browser** | **Check Version** | **Check Extensions** |
+| Google Chrome | chrome://version | chrome://extensions/ |
+| Microsoft Edge | edge://version | edge://extensions/ |
+| Mozilla Firefox | about:support | about:addons |
+| Opera | opera://about | opera://extensions/ |
+| Brave | brave://version | brave://extensions/ |
+
+# one cmd command to check all browser version installed
+powershell -NoProfile -Command "foreach($p in '%ProgramFiles%\Google\Chrome\Application\chrome.exe','%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe','%ProgramFiles%\Mozilla Firefox\firefox.exe','%LOCALAPPDATA%\Programs\Opera\opera.exe','%ProgramFiles%\VideoLAN\VLC\vlc.exe','%ProgramFiles%\BraveSoftware\Brave-Browser\Application\brave.exe'){ $n=Split-Path $p -Leaf; if(Test-Path $p){ '{0,-14} {1}' -f $n,(Get-Item $p).VersionInfo.ProductVersion } else { '{0,-14} not found in default folder' -f $n } }"
+
+# one powershell command to check installed browser version installed
+$paths=@{Chrome=@("$env:ProgramFiles\Google\Chrome\Application\chrome.exe","${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe","$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe");Edge=@("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe","$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe");Firefox=@("$env:ProgramFiles\Mozilla Firefox\firefox.exe","${env:ProgramFiles(x86)}\Mozilla Firefox\firefox.exe");Opera=@("$env:LOCALAPPDATA\Programs\Opera\opera.exe","$env:ProgramFiles\Opera\opera.exe");VLC=@("$env:ProgramFiles\VideoLAN\VLC\vlc.exe","${env:ProgramFiles(x86)}\VideoLAN\VLC\vlc.exe");Brave=@("$env:ProgramFiles\BraveSoftware\Brave-Browser\Application\brave.exe","${env:ProgramFiles(x86)}\BraveSoftware\Brave-Browser\Application\brave.exe","$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe")}; $paths.GetEnumerator() | ForEach-Object { $exe=$_.Value | Where-Object { Test-Path $_ -PathType Leaf } | Select-Object -First 1; [pscustomobject]@{App=$_.Key; Version=$(if($exe){(Get-Item $exe).VersionInfo.ProductVersion}else{'Not installed'})} } | Format-Table -AutoSize
+
